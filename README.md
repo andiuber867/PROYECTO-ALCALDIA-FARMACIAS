@@ -12,7 +12,7 @@ Demo web del sistema de inventario, ventas y entregas SUS para las seis farmacia
 - Ingreso de medicamentos limitado a administrador y técnico.
 - Usuarios y roles administrables desde la vista de administrador.
 - Centro de control con auditoría detallada de ventas, SUS e ingresos de lotes, además de exportación compatible con Excel.
-- Persistencia compartida automática mediante un almacén JSON en la nube, con respaldo local si el dispositivo pierde conexión.
+- Persistencia compartida automática mediante MantleDB, un almacén JSON público para demostraciones, con respaldo local si el dispositivo pierde conexión.
 
 ## Ejecutar localmente
 
@@ -27,8 +27,8 @@ npx serve .
 1. Subir esta carpeta a un repositorio de GitHub.
 2. Importar el repositorio desde Vercel.
 3. Elegir `Other` como framework. No se requiere comando de compilación.
-4. Publicar. El archivo `vercel.json` ya incluye la ruta de respaldo de la aplicación.
+4. Publicar. No necesita variables de entorno ni configuración adicional.
 
 ## Alcance de esta demo
 
-La demo sincroniza un único estado JSON compartido para que distintos dispositivos puedan registrar y consultar cambios sin configurar una base de datos. También conserva una copia en `localStorage` como respaldo. Este mecanismo es apropiado para demostraciones con datos ficticios; la etapa de producción debe usar autenticación y una base de datos transaccional. Véase [docs/modelo-datos.md](docs/modelo-datos.md).
+La demo sincroniza un único estado JSON público para que distintos dispositivos puedan registrar y consultar cambios sin configurar una base de datos. También conserva una copia en `localStorage` como respaldo. Este mecanismo es apropiado exclusivamente para demostraciones con datos ficticios: cualquier persona que conozca la dirección técnica podría leer o modificar el contenido. La etapa de producción debe usar autenticación y una base de datos transaccional. Véase [docs/modelo-datos.md](docs/modelo-datos.md).

@@ -1,5 +1,5 @@
 import { branches } from "./data.js?v=5";
-import { loadState, loadSharedState, saveState } from "./store.js?v=6";
+import { loadState, loadSharedState, saveState } from "./store.js?v=7";
 
 let state = loadState();
 let role = "admin";

@@ -1,7 +1,7 @@
 import { seedInventory, seedSales, seedEntries, seedUsers } from "./data.js?v=5";
 
 const KEY = "farmacias-san-carlos-demo-v3";
-const CLOUD_STATE_URL = "/api/state";
+const CLOUD_STATE_URL = "https://mantledb.sh/v2/farmacias-sc-4f8c2a9d7e61/state";
 let saveTimer;
 let queuedState;
 
@@ -75,7 +75,7 @@ export async function saveSharedState(state) {
     syncEvent("syncing", "Guardando para todos los dispositivos…");
     const shared = { ...state, initialized: true, sharedUpdatedAt: new Date().toISOString() };
     const response = await fetch(CLOUD_STATE_URL, {
-      method: "PUT",
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(shared),
     });
