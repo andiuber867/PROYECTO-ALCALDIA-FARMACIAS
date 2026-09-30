@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b6b45" />
+    <meta name="description" content="Demo del sistema municipal de farmacias de San Carlos." />
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles.css?v=6" />
+    <title>Farmacias Municipales · San Carlos</title>
+  </head>
+  <body>
+    <svg class="svg-sprite" aria-hidden="true">
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="m4 7 8 4 8-4v10l-8 4-8-4V7Z"/><path d="M12 11v10"/></symbol>
+      <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1"/><circle cx="19" cy="20" r="1"/><path d="M3 4h2l2.6 11.2a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 2-1.6L22 8H6"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></symbol>
+      <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0 5-5m-5 5-5-5M5 21h14"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
+      <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9h18l-2-6H5L3 9Z"/><path d="M5 9v12h14V9M9 21v-7h6v7"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/></symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    </svg>
+
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="brand-mark"><img src="/assets/logo-san-carlos.png" alt="Escudo del Municipio de San Carlos" /></div>
+          <div><strong>Farmacias</strong><span>Municipio de San Carlos</span></div>
+        </div>
+        <nav class="nav" aria-label="Navegación principal">
+          <button class="nav-item active" data-view="dashboard" data-roles="admin"><svg><use href="#i-grid"/></svg><span>Resumen</span></button>
+          <button class="nav-item" data-view="inventory" data-roles="admin,vendedor"><svg><use href="#i-box"/></svg><span>Inventario</span><b id="inventoryBadge">0</b></button>
+          <button class="nav-item" data-view="sales" data-roles="admin,vendedor"><svg><use href="#i-cart"/></svg><span>Ventas y SUS</span></button>
+          <button class="nav-item" data-view="entries" data-roles="admin,tecnico"><svg><use href="#i-plus"/></svg><span>Ingresos</span></button>
+          <button class="nav-item" data-view="reports" data-roles="admin"><svg><use href="#i-chart"/></svg><span>Control y reportes</span></button>
+          <button class="nav-item" data-view="users" data-roles="admin"><svg><use href="#i-users"/></svg><span>Usuarios y roles</span></button>
+        </nav>
+        <div class="sidebar-foot">
+          <span class="system-dot"></span>
+          <div><strong>Sistema operativo</strong><small>Demo guardada localmente</small></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <button class="icon-button menu-button" id="menuButton" aria-label="Abrir menú"><svg><use href="#i-menu"/></svg></button>
+          <div class="context">
+            <label for="branchSelect">Sucursal</label>
+            <select id="branchSelect"></select>
+          </div>
+          <div class="topbar-actions">
+            <div class="demo-role">
+              <span>Vista demo:</span>
+              <select id="roleSelect" aria-label="Simular rol">
+                <option value="admin">Administradora</option>
+                <option value="tecnico">Técnico</option>
+                <option value="vendedor">Vendedor</option>
+              </select>
+            </div>
+            <button class="icon-button notification-button" id="notificationButton" data-roles="admin,vendedor" aria-label="Ver alertas"><svg><use href="#i-bell"/></svg><i id="alertCount">0</i></button>
+            <div class="profile"><span>MA</span><div><strong id="profileName">María Aguilera</strong><small id="profileRole">Administradora</small></div></div>
+          </div>
+        </header>
+
+        <div class="content">
+          <section class="view active" id="view-dashboard">
+            <div class="page-heading">
+              <div><span class="eyebrow">OPERACIÓN MUNICIPAL</span><h1>Buenos días, <span id="greetingName">María</span></h1><p id="dashboardSubtitle">Este es el movimiento consolidado de las seis farmacias.</p></div>
+              <button class="button secondary" data-go="reports" data-roles="admin"><svg><use href="#i-chart"/></svg>Ver reporte mensual</button>
+            </div>
+            <div class="metric-grid" id="metricGrid"></div>
+            <div class="dashboard-grid">
+              <article class="panel chart-panel">
+                <div class="panel-heading"><div><h2>Movimiento mensual</h2><p>Ventas normales e ítems entregados por SUS</p></div><span class="trend"><b>+12,4%</b> vs. mes anterior</span></div>
+                <div class="chart-legend"><span><i class="legend-sales"></i>Ventas</span><span><i class="legend-sus"></i>SUS</span></div>
+                <div id="salesChart" class="sales-chart" aria-label="Gráfico de movimiento mensual"></div>
+              </article>
+              <article class="panel alerts-panel">
+                <div class="panel-heading"><div><h2>Vencimientos próximos</h2><p>Atención prioritaria por lote</p></div><button class="text-button" data-go="inventory">Ver todos</button></div>
+                <div id="expiryList" class="expiry-list"></div>
+              </article>
+            </div>
+            <article class="panel branches-panel">
+              <div class="panel-heading"><div><h2>Estado por sucursal</h2><p>Inventario y movimiento del mes actual</p></div></div>
+              <div class="branch-cards" id="branchCards"></div>
+            </article>
+          </section>
+
+          <section class="view" id="view-inventory">
+            <div class="page-heading"><div><span class="eyebrow">CONTROL POR LOTES</span><h1>Inventario de medicamentos</h1><p id="inventorySubtitle">Existencias, precios y vencimientos de cada sucursal.</p></div><button class="button primary" data-go="entries" data-roles="admin,tecnico"><svg><use href="#i-plus"/></svg>Ingresar medicamento</button></div>
+            <article class="panel table-panel">
+              <div class="toolbar">
+                <label class="search"><svg><use href="#i-search"/></svg><input id="inventorySearch" type="search" placeholder="Buscar medicamento o lote" /></label>
+                <select id="expiryFilter" aria-label="Filtrar por vencimiento"><option value="all">Todos los estados</option><option value="red">Vence en 3 meses</option><option value="yellow">Vence en 6 meses</option><option value="green">Vigente</option></select>
+                <span class="result-count" id="inventoryCount"></span>
+              </div>
+              <div class="table-wrap"><table><thead><tr><th>Medicamento</th><th>Sucursal</th><th>Lote</th><th>Existencias</th><th>Vencimiento</th><th class="admin-only">Costo unitario</th><th>Precio venta</th><th>Estado</th><th class="admin-only">Administrar</th></tr></thead><tbody id="inventoryTable"></tbody></table></div>
+            </article>
+          </section>
+
+          <section class="view" id="view-sales">
+            <div class="page-heading"><div><span class="eyebrow">NUEVO MOVIMIENTO</span><h1>Venta o entrega SUS</h1><p>Registra una salida de inventario en pocos pasos.</p></div><span class="branch-pill"><svg><use href="#i-store"/></svg><span id="saleBranchLabel">Santa Fe</span></span></div>
+            <div class="sale-layout">
+              <article class="panel sale-builder">
+                <div class="type-switch" role="radiogroup" aria-label="Tipo de salida">
+                  <button class="active" data-sale-type="normal"><span>Venta normal</span><small>Cobro al paciente</small></button>
+                  <button data-sale-type="sus"><span>Entrega SUS</span><small>Sin costo</small></button>
+                </div>
+                <div class="form-section"><h2>Agregar medicamento</h2><div class="sale-add-grid"><label><span>Medicamento y lote</span><select id="saleProduct"></select></label><label><span>Cantidad</span><input id="saleQuantity" type="number" min="1" value="1" /></label><button class="button primary" id="addToCart"><svg><use href="#i-plus"/></svg>Agregar</button></div></div>
+                <div class="cart-list" id="cartList"></div>
+              </article>
+              <aside class="panel sale-summary">
+                <span class="eyebrow">RESUMEN</span><h2 id="summaryTitle">Venta normal</h2>
+                <dl><div><dt>Productos</dt><dd id="summaryItems">0</dd></div><div><dt>Subtotal</dt><dd id="summarySubtotal">Bs 0,00</dd></div><div class="profit-row admin-only"><dt>Ganancia estimada</dt><dd id="summaryProfit">Bs 0,00</dd></div></dl>
+                <div class="total"><span>Total</span><strong id="summaryTotal">Bs 0,00</strong></div>
+                <label class="notes"><span>Observación (opcional)</span><textarea id="saleNotes" rows="3" placeholder="Ej.: receta N.º 2048"></textarea></label>
+                <button class="button primary full" id="completeSale"><svg><use href="#i-check"/></svg>Registrar movimiento</button>
+                <p class="summary-hint"><svg><use href="#i-lock"/></svg>El registro descuenta automáticamente las existencias.</p>
+              </aside>
+            </div>
+          </section>
+
+          <section class="view" id="view-entries">
+            <div class="page-heading"><div><span class="eyebrow">ABASTECIMIENTO</span><h1>Ingreso de medicamentos</h1><p>Registra un lote nuevo con trazabilidad completa.</p></div><span class="branch-pill"><svg><use href="#i-store"/></svg><span id="entryBranchLabel">Todas las sucursales</span></span></div>
+            <article class="panel form-card">
+              <form id="entryForm">
+                <div class="form-title"><span class="form-icon"><svg><use href="#i-box"/></svg></span><div><h2>Datos del lote</h2><p>Todos los campos son obligatorios.</p></div></div>
+                <div class="form-grid">
+                  <label><span>Nombre del medicamento</span><input name="name" required placeholder="Ej.: Paracetamol 500 mg" /></label>
+                  <label><span>Número de lote</span><input name="lot" required placeholder="Ej.: PCM-2408" /></label>
+                  <label><span>Sucursal</span><select name="branch" id="entryBranch" required></select></label>
+                  <label><span>Cantidad de ingreso</span><input name="quantity" type="number" min="1" required placeholder="0" /></label>
+                  <label><span>Precio unitario (Bs)</span><input name="unitCost" type="number" min="0" step="0.01" required placeholder="0,00" /></label>
+                  <label class="admin-only"><span>Margen de ganancia (%)</span><input name="margin" type="number" min="0" step="0.01" value="30" required /></label>
+                  <div class="technician-only pricing-pending-note"><span><svg><use href="#i-lock"/></svg></span><div><strong>Precio protegido</strong><small>Administración definirá el porcentaje de ganancia antes de habilitar la venta.</small></div></div>
+                  <label><span>Fecha de ingreso</span><input name="entryDate" type="date" required /></label>
+                  <label><span>Fecha de vencimiento</span><input name="expiry" type="date" required /></label>
+                </div>
+                <div class="form-actions"><button type="reset" class="button secondary">Limpiar</button><button type="submit" class="button primary"><svg><use href="#i-check"/></svg>Guardar en inventario</button></div>
+              </form>
+            </article>
+          </section>
+
+          <section class="view" id="view-reports">
+            <div class="page-heading"><div><span class="eyebrow">AUDITORÍA ADMINISTRATIVA</span><h1>Control de movimientos</h1><p>Consulta cada venta, entrega SUS e ingreso de lote sin salir del sistema.</p></div><button class="button primary" id="exportReport"><svg><use href="#i-download"/></svg>Exportar auditoría</button></div>
+            <div class="report-filters"><label>Periodo <input id="reportMonth" type="month" /></label><label>Sucursal <select id="reportBranch"></select></label><label>Tipo de salida <select id="reportType"><option value="all">Ventas y SUS</option><option value="normal">Solo ventas</option><option value="sus">Solo SUS</option></select></label><label>Buscar <input id="reportSearch" type="search" placeholder="Vendedor, medicamento o lote" /></label></div>
+            <div class="metric-grid report-metrics" id="reportMetrics"></div>
+            <div class="dashboard-grid report-grid"><article class="panel"><div class="panel-heading"><div><h2>Comparativo de sucursales</h2><p>Ingresos registrados durante el periodo</p></div></div><div id="branchBarChart" class="branch-bar-chart"></div></article><article class="panel"><div class="panel-heading"><div><h2>Distribución</h2><p>Ventas normales frente a entregas SUS</p></div></div><div id="donutChart" class="donut-layout"></div></article></div>
+            <article class="panel table-panel audit-panel"><div class="audit-tabs"><button class="active" data-audit-view="sales">Ventas y entregas <b id="salesAuditCount">0</b></button><button data-audit-view="entries">Ingresos de lotes <b id="entryAuditCount">0</b></button></div><div class="panel-heading audit-heading"><div><h2 id="auditTitle">Ventas y entregas SUS</h2><p id="reportRowsLabel"></p></div><span class="audit-hint"><svg><use href="#i-lock"/></svg>Registro visible solo para administración</span></div><div class="table-wrap"><table class="audit-table"><thead id="reportTableHead"></thead><tbody id="reportTable"></tbody></table></div></article>
+          </section>
+
+          <section class="view" id="view-users">
+            <div class="page-heading"><div><span class="eyebrow">ACCESOS DEL SISTEMA</span><h1>Usuarios y roles</h1><p>Administra quién puede ver y modificar cada módulo.</p></div><button class="button primary" id="newUserButton"><svg><use href="#i-plus"/></svg>Nuevo usuario</button></div>
+            <div class="role-summary" id="roleSummary"></div>
+            <article class="panel table-panel"><div class="toolbar"><label class="search"><svg><use href="#i-search"/></svg><input id="userSearch" type="search" placeholder="Buscar usuario" /></label><span class="result-count" id="userCount"></span></div><div class="table-wrap"><table><thead><tr><th>Usuario</th><th>Rol</th><th>Sucursal asignada</th><th>Estado</th><th>Último acceso</th></tr></thead><tbody id="usersTable"></tbody></table></div></article>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    <aside class="alert-drawer" id="alertDrawer" aria-label="Alertas de vencimiento">
+      <div class="drawer-heading"><div><span class="eyebrow">PRIORIDAD</span><h2>Alertas de vencimiento</h2></div><button class="icon-button" id="closeAlerts" aria-label="Cerrar alertas"><svg><use href="#i-close"/></svg></button></div><div id="drawerAlerts"></div>
+    </aside>
+
+    <dialog id="userDialog">
+      <form method="dialog" id="userForm">
+        <div class="dialog-heading"><div><span class="eyebrow">NUEVO ACCESO</span><h2>Crear usuario</h2></div><button type="button" class="icon-button" data-close-user aria-label="Cerrar"><svg><use href="#i-close"/></svg></button></div>
+        <div class="dialog-body"><label><span>Nombre completo</span><input name="name" required placeholder="Nombre y apellido" /></label><label><span>Correo electrónico</span><input name="email" type="email" required placeholder="usuario@sancarlos.gob.bo" /></label><label><span>Rol</span><select name="role" required><option value="tecnico">Técnico</option><option value="vendedor">Vendedor</option><option value="admin">Administrador</option></select></label><label><span>Sucursal</span><select name="branch" id="userBranch" required></select></label></div>
+        <div class="dialog-actions"><button type="button" class="button secondary" data-close-user>Cancelar</button><button type="submit" class="button primary"><svg><use href="#i-check"/></svg>Crear usuario</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="priceDialog">
+      <form method="dialog" id="priceForm">
+        <div class="dialog-heading"><div><span class="eyebrow">SOLO ADMINISTRACIÓN</span><h2>Configurar precio de venta</h2></div><button type="button" class="icon-button" data-close-price aria-label="Cerrar"><svg><use href="#i-close"/></svg></button></div>
+        <div class="price-dialog-body">
+          <input type="hidden" name="productId" />
+          <div class="price-product"><span class="form-icon"><svg><use href="#i-box"/></svg></span><div><strong id="priceProductName"></strong><small id="priceProductMeta"></small></div></div>
+          <div class="price-cost-row"><span>Costo unitario registrado</span><strong id="priceUnitCost"></strong></div>
+          <label class="custom-margin"><span>Porcentaje de ganancia autorizado</span><div><input type="number" name="margin" min="0" step="0.01" required inputmode="decimal" /><b>%</b></div><small>Puede ingresar cualquier porcentaje igual o mayor a cero.</small></label>
+          <div class="price-result"><span>Precio final para vendedores</span><strong id="priceResult"></strong><small>Este precio quedará bloqueado en ventas.</small></div>
+        </div>
+        <div class="dialog-actions"><button type="button" class="button secondary" data-close-price>Cancelar</button><button type="submit" class="button primary"><svg><use href="#i-check"/></svg>Guardar precio</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="movementDialog">
+      <div class="dialog-heading"><div><span class="eyebrow">TRAZABILIDAD COMPLETA</span><h2 id="movementTitle">Detalle del movimiento</h2></div><button type="button" class="icon-button" data-close-movement aria-label="Cerrar"><svg><use href="#i-close"/></svg></button></div>
+      <div class="movement-detail" id="movementDetail"></div>
+      <div class="dialog-actions"><button type="button" class="button secondary" data-close-movement>Cerrar</button></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"><span><svg><use href="#i-check"/></svg></span><div><strong id="toastTitle">Listo</strong><p id="toastMessage"></p></div></div>
+    <script type="module" src="/src/js/app.js?v=8"></script>
+  </body>
+</html>
