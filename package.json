@@ -2,6 +2,7 @@
   "name": "farmacias-municipales-san-carlos",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "npx serve . -l 4173",
     "check": "node --check src/js/app.js && node --check src/js/data.js && node --check src/js/store.js"

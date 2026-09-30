@@ -1,6 +1,9 @@
 import { seedInventory, seedSales, seedEntries, seedUsers } from "./data.js?v=5";
 
 const KEY = "farmacias-san-carlos-demo-v3";
+const CLOUD_STATE_URL = "/api/state";
+let saveTimer;
+let queuedState;
 
 const clone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -58,6 +61,54 @@ export function loadState() {
 
 export function saveState(state) {
   localStorage.setItem(KEY, JSON.stringify(state));
+  queuedState = JSON.parse(JSON.stringify(state));
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => saveSharedState(queuedState), 300);
+}
+
+function syncEvent(status, message) {
+  window.dispatchEvent(new CustomEvent("pharmacy-sync", { detail: { status, message } }));
+}
+
+export async function saveSharedState(state) {
+  try {
+    syncEvent("syncing", "Guardando para todos los dispositivos…");
+    const shared = { ...state, initialized: true, sharedUpdatedAt: new Date().toISOString() };
+    const response = await fetch(CLOUD_STATE_URL, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(shared),
+    });
+    if (!response.ok) throw new Error(`Cloud save failed: ${response.status}`);
+    state.sharedUpdatedAt = shared.sharedUpdatedAt;
+    localStorage.setItem(KEY, JSON.stringify(state));
+    syncEvent("shared", "Datos compartidos entre dispositivos");
+    return true;
+  } catch (_) {
+    syncEvent("local", "Sin conexión · cambios guardados localmente");
+    return false;
+  }
+}
+
+export async function loadSharedState(fallback, initialize = true) {
+  try {
+    syncEvent("syncing", "Consultando datos compartidos…");
+    const response = await fetch(`${CLOUD_STATE_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) throw new Error(`Cloud read failed: ${response.status}`);
+    const shared = await response.json();
+    const valid = shared?.initialized && Array.isArray(shared.inventory) && Array.isArray(shared.sales) && Array.isArray(shared.entries) && Array.isArray(shared.users);
+    if (!valid && initialize) {
+      const created = await saveSharedState(fallback);
+      return created ? fallback : null;
+    }
+    if (!valid) return null;
+    localStorage.setItem(KEY, JSON.stringify(shared));
+    syncEvent("shared", "Datos compartidos entre dispositivos");
+    return shared;
+  } catch (_) {
+    syncEvent("local", "Sin conexión · cambios guardados localmente");
+    return null;
+  }
 }
 
 export function resetState() {

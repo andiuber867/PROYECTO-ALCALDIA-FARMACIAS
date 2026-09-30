@@ -12,7 +12,7 @@ Demo web del sistema de inventario, ventas y entregas SUS para las seis farmacia
 - Ingreso de medicamentos limitado a administrador y técnico.
 - Usuarios y roles administrables desde la vista de administrador.
 - Centro de control con auditoría detallada de ventas, SUS e ingresos de lotes, además de exportación compatible con Excel.
-- Persistencia local en el navegador para fines de demostración.
+- Persistencia compartida automática mediante un almacén JSON en la nube, con respaldo local si el dispositivo pierde conexión.
 
 ## Ejecutar localmente
 
@@ -31,4 +31,4 @@ npx serve .
 
 ## Alcance de esta demo
 
-Los datos se guardan en `localStorage`, por lo que pertenecen únicamente al navegador y dispositivo actual. La siguiente etapa debe reemplazar esta capa por autenticación y una base de datos central para que las seis sucursales compartan información en tiempo real. Véase [docs/modelo-datos.md](docs/modelo-datos.md).
+La demo sincroniza un único estado JSON compartido para que distintos dispositivos puedan registrar y consultar cambios sin configurar una base de datos. También conserva una copia en `localStorage` como respaldo. Este mecanismo es apropiado para demostraciones con datos ficticios; la etapa de producción debe usar autenticación y una base de datos transaccional. Véase [docs/modelo-datos.md](docs/modelo-datos.md).

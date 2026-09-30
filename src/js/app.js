@@ -1,5 +1,5 @@
 import { branches } from "./data.js?v=5";
-import { loadState, saveState } from "./store.js?v=5";
+import { loadState, loadSharedState, saveState } from "./store.js?v=6";
 
 let state = loadState();
 let role = "admin";
@@ -40,6 +40,14 @@ function showToast(title, message) {
   $("#toast").classList.add("show");
   clearTimeout(showToast.timer);
   showToast.timer = setTimeout(() => $("#toast").classList.remove("show"), 3400);
+}
+
+function updateSyncStatus({ status, message }) {
+  const dot = $(".system-dot");
+  const label = $("#syncStatus");
+  dot?.classList.toggle("syncing", status === "syncing");
+  dot?.classList.toggle("offline", status === "local");
+  if (label) label.textContent = message;
 }
 
 function fillBranchSelects() {
@@ -404,6 +412,7 @@ function registerWebMCP() {
 }
 
 function bindEvents() {
+  window.addEventListener("pharmacy-sync", (event) => updateSyncStatus(event.detail));
   $$(".nav-item,[data-go]").forEach((el)=>el.addEventListener("click",()=>navigate(el.dataset.view||el.dataset.go)));
   $("#roleSelect").addEventListener("change",(e)=>{role=e.target.value;cart=[];applyRole(true);});
   $("#branchSelect").addEventListener("change",(e)=>{
@@ -434,8 +443,21 @@ function bindEvents() {
   $("#menuButton").addEventListener("click",()=>{$("#sidebar").classList.toggle("open");$("#drawerBackdrop").classList.toggle("mobile-nav");});
 }
 
+async function hydrateSharedState(showUpdate = false) {
+  const shared = await loadSharedState(state, !showUpdate);
+  if (!shared) return;
+  const changed = shared.sharedUpdatedAt && shared.sharedUpdatedAt !== state.sharedUpdatedAt;
+  state = shared;
+  renderAll();
+  if ($("#view-sales").classList.contains("active")) renderSaleProducts();
+  if (showUpdate && changed) showToast("Datos actualizados", "Se cargaron movimientos realizados desde otro dispositivo.");
+}
+
 fillBranchSelects();
 $("#reportMonth").value=currentMonth();
 $("#entryForm [name='entryDate']").value=new Date().toISOString().slice(0,10);
 const minExpiry=new Date();minExpiry.setDate(minExpiry.getDate()+1);$("#entryForm [name='expiry']").min=minExpiry.toISOString().slice(0,10);
 bindEvents(); applyRole(); renderSaleProducts(); registerWebMCP();
+hydrateSharedState();
+setInterval(() => { if (document.visibilityState === "visible") hydrateSharedState(true); }, 15000);
+window.addEventListener("focus", () => hydrateSharedState(true));
